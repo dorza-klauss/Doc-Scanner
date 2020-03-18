@@ -43,8 +43,8 @@ def edges_det(img, min_val, max_val):
 
     # Add black border - detection of border touching pages
     # Contour can't touch side of image
-    img = cv2.copyMakeBorder(img, 5, 5, 5, 5, cv2.BORDER_CONSTANT, value=[0, 0, 0])
-    implt(img, 'gray', 'Median Blur + Border')
+ #   img = cv2.copyMakeBorder(img, 5, 5, 5, 5, cv2.BORDER_CONSTANT, value=[0, 0, 0])
+  #  implt(img, 'gray', 'Median Blur + Border')
 
     return cv2.Canny(img, min_val, max_val)
 
@@ -67,17 +67,17 @@ def four_corners_sort(pts):
 					 pts[np.argmin(diff)]])
 
 
-def contour_offset(cnt, offset):
-	""" Offset contour because of 5px border """
-	cnt += offset
-	cnt[cnt < 0] = 0
-	return cnt
+#def contour_offset(cnt, offset):
+	#""" Offset contour because of 5px border """
+#	cnt += offset
+#	cnt[cnt < 0] = 0
+#	return cnt
 
 
 def find_page_contours(edges, img):
 	""" Finding corner points of page contour """
 	# Getting contours
-	contours, hierarchy = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+	contours, hierarchy = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE) #cv2 version doesn't pass all the three parameters
 
 	# Finding biggest rectangle otherwise return original corners
 	height = edges.shape[0]
@@ -87,9 +87,9 @@ def find_page_contours(edges, img):
 
 	max_area = MIN_COUNTOUR_AREA
 	page_contour = np.array([[0, 0],
-							 [0, height - 5],
-							 [width - 5, height - 5],
-							 [width - 5, 0]])
+							 [0, height],
+							 [width, height],
+							 [width, 0]])
 
 	for cnt in contours:
 		perimeter = cv2.arcLength(cnt, True)
@@ -104,7 +104,7 @@ def find_page_contours(edges, img):
 
 	# Sort corners and offset them
 	page_contour = four_corners_sort(page_contour)
-	return contour_offset(page_contour, (-5, -5))
+	return page_contour
 
 
 page_contour = find_page_contours(edges_image, resize(image))
@@ -135,6 +135,6 @@ def persp_transform(img, s_points):
 	return cv2.warpPerspective(img, M, (int(width), int(height)))
 
 
-newImage = persp_transform(edges, page_contour)
+newImage = persp_transform(image, page_contour)
 implt(newImage, t='Result')
 
