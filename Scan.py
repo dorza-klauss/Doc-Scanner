@@ -136,5 +136,5 @@ def persp_transform(img, s_points):
 
 
 newImage = persp_transform(edges, page_contour)
-implt(newimage, t='Result')
+implt(newImage, t='Result')
 
