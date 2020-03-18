@@ -1,10 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
+from skimage.filters import threshold_local
 
 plt.rcParams['figure.figsize'] = (9.0, 9.0)
 
-def implt(img, cmp= None, t=''):
+def implt(img, cmp= 'Greys_r', t=''): #matplot uses colormap which maps intensities to color/ avoiding this, we use greys_r
 	plt.imshow(img, cmap=cmp)
 	plt.title(t)
 	plt.show()
@@ -136,5 +137,8 @@ def persp_transform(img, s_points):
 
 
 newImage = persp_transform(image, page_contour)
+newImage = cv2.cvtColor(newImage, cv2.COLOR_BGR2GRAY)
+T = threshold_local(newImage, 11, method="gaussian", offset=5)
+newImage = (newImage > T).astype("uint8") * 255 #this increases the b/w intensity of the pixels above the threshold voltage
 implt(newImage, t='Result')
 
