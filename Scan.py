@@ -135,6 +135,6 @@ def persp_transform(img, s_points):
 	return cv2.warpPerspective(img, M, (int(width), int(height)))
 
 
-newImage = persp_transform(image, page_contour)
+newImage = persp_transform(edges, page_contour)
 implt(newImage, t='Result')
 
